@@ -1,10 +1,8 @@
-package main
+package pokecache
 
 import (
 	"testing"
 	"time"
-
-	pokecache "github.com/sianwa11/pokedex/internal"
 )
 
 func TestAddGet(t *testing.T) {
@@ -20,7 +18,7 @@ func TestAddGet(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		cache := pokecache.NewCache(interval)
+		cache := NewCache(interval)
 		cache.Add(c.key, c.val)
 
 		cached, ok := cache.Get(c.key)
@@ -38,7 +36,7 @@ func TestAddGet(t *testing.T) {
 func TestReapLoop(t *testing.T) {
 	const baseTime = 5 * time.Millisecond
 	const waitTime = baseTime + 5 * time.Millisecond
-	cache := pokecache.NewCache(baseTime)
+	cache := NewCache(baseTime)
 	cache.Add("key1", []byte("value1"))
 
 	_, ok := cache.Get("key1")

@@ -5,18 +5,11 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"time"
-
-	pokecache "github.com/sianwa11/pokedex/internal"
 )
 
-var pokeCache *pokecache.Cache
 
-func init() {
-	pokeCache = pokecache.NewCache(5 * time.Minute)
-}
 
-func commandMap(cfg *config) error {
+func commandMap(cfg *config, flag string) error {
 	
 	url := cfg.Next
 
@@ -24,7 +17,7 @@ func commandMap(cfg *config) error {
 		url = "https://pokeapi.co/api/v2/location-area/"
 	}
 
-	if cached, ok := pokeCache.Get(url); ok {
+	if cached, ok := PokeCache.Get(url); ok {
 		if err := json.Unmarshal(cached, &cfg); err != nil {
 			return err
 		}
@@ -46,7 +39,7 @@ func commandMap(cfg *config) error {
 		return err
 	}
 
-	pokeCache.Add(url, body)
+	PokeCache.Add(url, body)
 
 	if err := json.Unmarshal(body, &cfg); err != nil {
 		return err

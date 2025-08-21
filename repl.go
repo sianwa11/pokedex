@@ -23,10 +23,15 @@ func startRepl() {
 		}
 
 		commandName := words[0]
+		parameter := ""
+
+		if len(words) > 1 {
+			parameter = words[1]
+		}
 
 		command, exists := getCommands()[commandName]
 		if exists {
-				err := command.callback(cfg)
+				err := command.callback(cfg, parameter)
 				if err != nil {
 					fmt.Println(err)
 				}
@@ -61,7 +66,7 @@ type config struct {
 type cliCommand struct {
 	name				string
 	description		string
-	callback			func(*config) error
+	callback			func(*config, string) error
 }
 
 
@@ -87,6 +92,11 @@ func getCommands() map[string]cliCommand {
 			name: 			"mapb",
 			description: 	"Display the previous map of the Pokedex",	
 			callback: 		commandMapb,
+		},
+		"explore": {
+			name: 			"explore",
+			description: 	"Explore a specific area in the Pokedex",
+			callback: 		commandExplore,
 		},
 	}
 }
