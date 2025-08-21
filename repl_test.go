@@ -1,28 +1,58 @@
 package main
 
-// import "testing"
+import (
+	"testing"
+	"time"
 
+	pokecache "github.com/sianwa11/pokedex/internal"
+)
 
-// func TestCleanInput(t *testing.T) {
-// 	cases := []struct {
-// 		input    string
-// 		expected []string
-// 	}{
-// 		{"  Hello, World!  ", []string{"hello,", "world!"}},
-// 		{"  Go is great!  ", []string{"go", "is", "great!"}},
-// 		{"  Test 123  ", []string{"test", "123"}},
-// 		{"  Multiple   spaces  ", []string{"multiple", "spaces"}},
-// 		{"  Special @# characters!  ", []string{"special", "@#", "characters!"}},
-// 		{"  ", []string{""}}}
+func TestAddGet(t *testing.T) {
+	const interval = 5 * time.Second
+	cases := []struct {
+		key string
+		val []byte
+	}{
+		{"key1", []byte("value1")},
+		{"key2", []byte("value2")},
+		{"key3", []byte("value3")},	
+		{"key4", []byte("value4")},
+	}
 
+	for _, c := range cases {
+		cache := pokecache.NewCache(interval)
+		cache.Add(c.key, c.val)
 
-// 		for _, c := range cases {
-// 			actual := cleanInput(c.input)
+		cached, ok := cache.Get(c.key)
+		if !ok {
+			t.Errorf("expected to find key")
+			return
+		}
 
-// 			for i := range actual {
-// 				if actual[i] != c.expected[i] {
-// 					t.Errorf("cleanInput(%q) = %v; want %v", c.input, actual, c.expected)
-// 				}
-// 			}
-// 		}
-// 	}
+		if string(c.val) != string(cached) {
+			t.Errorf("values are not the same")
+		}
+	}
+}
+
+func TestReapLoop(t *testing.T) {
+	const baseTime = 5 * time.Millisecond
+	const waitTime = baseTime + 5 * time.Millisecond
+	cache := pokecache.NewCache(baseTime)
+	cache.Add("key1", []byte("value1"))
+
+	_, ok := cache.Get("key1")
+	if !ok {
+		t.Errorf("Expected to get value 1")
+		return
+	}
+
+	time.Sleep(waitTime)
+
+	_, ok = cache.Get("key1")
+	
+	if ok {
+		t.Errorf("Not expected to get value 1")
+		return
+	}
+}
