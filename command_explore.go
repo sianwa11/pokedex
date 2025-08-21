@@ -24,7 +24,7 @@ func commandExplore(_ * config, areaName string) error {
 		
 	}
 
-	url := "https://pokeapi.co/api/v2/location-area/" + areaName
+	url := LocationURL + areaName
 
 
 	var location LocationAreaResponse

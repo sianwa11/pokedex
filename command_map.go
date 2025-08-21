@@ -14,7 +14,7 @@ func commandMap(cfg *config, flag string) error {
 	url := cfg.Next
 
 	if url == "" {
-		url = "https://pokeapi.co/api/v2/location-area/"
+		url = LocationURL
 	}
 
 	if cached, ok := PokeCache.Get(url); ok {
