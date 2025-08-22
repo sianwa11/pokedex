@@ -8,9 +8,28 @@ import (
 	"net/http"
 )
 
+type PokemonStats struct {
+	BaseStat int `json:"base_stat"`
+	Effort 	 int `json:"effort"`
+	Stat struct {
+		Name string `json:"name"`
+		URL  string `json:"url"`
+	} `json:"stat"`
+}
+
+type PokemonTypes struct {
+	Type struct {
+		Name string `json:"name"`
+	} `json:"type"`
+}
+
 type Pokemon struct {
-	Name string `json:"name"`
+	Name           string `json:"name"`
 	BaseExperience int `json:"base_experience"`
+	Height         int `json:"height"`
+	Weight         int `json:"weight"`
+	Stats          []PokemonStats `json:"stats"`
+	Types          []PokemonTypes `json:"types"`
 }
 
 type Pokedex struct {
@@ -31,18 +50,18 @@ func commandCatch(_ *config, pokemonName string) error {
 
 	res, err := http.Get(url)
 	if err != nil {
-		return err
+		return fmt.Errorf("error getting request: %w", err)
 	}
 	defer res.Body.Close()
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		return err
+		return fmt.Errorf("error reading stream: %w", err)
 	}
 
 	var pokemon Pokemon
 	if err := json.Unmarshal(body, &pokemon); err != nil {
-		return nil
+		return fmt.Errorf("error unmarshalling pokemon: %w", err)
 	}
 
 	fmt.Printf("Throwing a Pokeball at %s...\n", pokemon.Name)
@@ -54,7 +73,7 @@ func commandCatch(_ *config, pokemonName string) error {
 
 	MyPokedex.AddPokemon(pokemon)
 	fmt.Printf("%s was caught!\n", pokemon.Name)
-
+	fmt.Println("You may now inspect it with the inspect command")
 
 	return nil
 }

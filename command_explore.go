@@ -31,7 +31,7 @@ func commandExplore(_ * config, areaName string) error {
 
 	if cached, ok := PokeCache.Get(url); ok {
 		if err := json.Unmarshal(cached, &location); err != nil {
-			return err
+			return fmt.Errorf("error unmarshalling location: %w", err)
 		}
 
 		for _, result := range location.PokemonEncounters {
@@ -42,19 +42,19 @@ func commandExplore(_ * config, areaName string) error {
 
 	res, err := http.Get(url)
 	if err != nil {
-		return err
+		return fmt.Errorf("error getting response: %w", err)
 	}
 	defer res.Body.Close()
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		return err
+		return fmt.Errorf("error reading stream: %w", err)
 	}
 
 	PokeCache.Add(url, body)
 
 	if err := json.Unmarshal(body, &location); err != nil {
-		return err
+		return fmt.Errorf("error unmarshalling pokemon: %w", err)
 	}
 
 	for _, result := range location.PokemonEncounters {

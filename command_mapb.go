@@ -16,7 +16,7 @@ func commandMapb(cfg *config, flag string) error {
 
 	if cached, ok := PokeCache.Get(*url); ok {
 		if err := json.Unmarshal(cached, &cfg); err != nil {
-			return err
+			return fmt.Errorf("error unmarshalling location: %w", err)
 		}
 
 		for _, result := range cfg.Results {
@@ -27,7 +27,7 @@ func commandMapb(cfg *config, flag string) error {
 
 	res, err := http.Get(*url)
 	if err != nil {
-		return err
+		return fmt.Errorf("error getting response: %w", err)
 	}
 	defer res.Body.Close()
 
@@ -39,7 +39,7 @@ func commandMapb(cfg *config, flag string) error {
 	PokeCache.Add(*url, body)
 
 	if err := json.Unmarshal(body, &cfg); err != nil {
-		return err
+		return fmt.Errorf("error unmarshalling location: %w", err)
 	}
 
 

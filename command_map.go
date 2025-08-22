@@ -19,7 +19,7 @@ func commandMap(cfg *config, flag string) error {
 
 	if cached, ok := PokeCache.Get(url); ok {
 		if err := json.Unmarshal(cached, &cfg); err != nil {
-			return err
+			return fmt.Errorf("error unmarshalling location: %w", err)
 		}
 
 		for _, result := range cfg.Results {
@@ -30,19 +30,19 @@ func commandMap(cfg *config, flag string) error {
 	
 	res, err := http.Get(url)
 	if err != nil {
-		return err
+		return fmt.Errorf("error getting response: %w", err)
 	}
 	defer res.Body.Close()	
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		return err
+		return fmt.Errorf("error reading stream: %w", err)
 	}
 
 	PokeCache.Add(url, body)
 
 	if err := json.Unmarshal(body, &cfg); err != nil {
-		return err
+		return fmt.Errorf("error unmarshalling location: %w", err)
 	}
 
 	for _, result := range cfg.Results {
