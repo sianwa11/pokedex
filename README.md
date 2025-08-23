@@ -2,7 +2,7 @@
 
 A command-line Pokedex application built with Go that interacts with the [PokeAPI](https://pokeapi.co/).
 
-## Features
+## Features.
 
 - Explore location areas in the Pokemon world
 - Catch Pokemon with a random chance of success
